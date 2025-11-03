@@ -1,9 +1,15 @@
 <script lang="ts">
 </script>
 
-<textarea>This is the notes app</textarea>
+<div class="notes">
+	<textarea>This is the notes app</textarea>
+</div>
 
 <style>
+	.notes {
+		height: 100%;
+	}
+
 	textarea {
 		resize: none;
 		width: 100%;
