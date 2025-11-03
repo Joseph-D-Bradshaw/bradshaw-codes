@@ -1,8 +1,12 @@
+<script>
+	import windowStore from '$lib/stores/windows.svelte';
+</script>
+
 <div class="menubar">
 	<div class="menubar__left">
 		{@render appleLogo()}
 
-		<span class="menubar__option menubar__option--bold">Notes</span>
+		<span class="menubar__option menubar__option--bold">{windowStore.activeWindowTitle}</span>
 		<span class="menubar__option">File</span>
 		<span class="menubar__option">Edit</span>
 		<span class="menubar__option">View</span>

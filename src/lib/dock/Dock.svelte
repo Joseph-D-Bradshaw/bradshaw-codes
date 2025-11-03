@@ -1,12 +1,29 @@
+<script>
+	import { Notes } from '$lib';
+	import windowStore from '$lib/stores/windows.svelte';
+</script>
+
 <div class="dock">
 	<button aria-label="app-1" class="dock__app dock__app--green"></button>
-	<button aria-label="app-2" class="dock__app dock__app--green"></button>
-	<button aria-label="app-3" class="dock__app dock__app--yellow dock__app--running"></button>
+	<button
+		onclick={() => windowStore.add(note, 'Obsidian')}
+		aria-label="app-2"
+		class="dock__app dock__app--green"
+	></button>
+	<button
+		onclick={() => windowStore.add(note, 'Notes')}
+		aria-label="app-3"
+		class="dock__app dock__app--yellow dock__app--running"
+	></button>
 	<button aria-label="app-4" class="dock__app dock__app--blue"></button>
 	<div class="divider"></div>
 	<button aria-label="app-5" class="dock__app dock__app--blue"></button>
 	<button aria-label="app-6" class="dock__app dock__app--blue"></button>
 </div>
+
+{#snippet note()}
+	<Notes />
+{/snippet}
 
 <style>
 	.dock {

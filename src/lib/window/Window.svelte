@@ -2,35 +2,23 @@
 	import { onMount, type Snippet } from 'svelte';
 
 	export type OSWindow = {
-		id: string;
 		title: string;
 		width: number;
 		height: number;
-		x: number;
-		y: number;
-		z: number;
-		minimized: boolean;
-		isOpen: boolean;
 		onclose: () => void;
 	};
 </script>
 
 <script lang="ts">
-	import { makeDraggable } from '$lib';
 	import gsap from 'gsap';
 	import { Draggable } from 'gsap/Draggable';
+	import windowStore from '$lib/stores/windows.svelte';
 
 	let {
-		id,
 		title,
 		children,
-		width,
-		height,
-		x,
-		y,
-		z,
-		minimized,
-		isOpen,
+		width: initialWidth,
+		height: initialHeight,
 		onclose
 	}: OSWindow & { children?: Snippet } = $props();
 
@@ -44,6 +32,10 @@
 	let topLeftHandle: HTMLDivElement;
 	let bottomRightHandle: HTMLDivElement;
 	let bottomLeftHandle: HTMLDivElement;
+
+	let width = $state(initialWidth);
+	let height = $state(initialHeight);
+	let minimized = $state(false);
 
 	function updateBottomRightDrag(this: Draggable) {
 		gsap.set(windowElement, { width: '+=' + this.deltaX });
@@ -81,14 +73,29 @@
 		gsap.set(windowElement, { height: '-=' + this.deltaY, y: '+=' + this.deltaY });
 	}
 
-	function onmaximize() {}
+	function onmaximize() {
+		const rect = document.querySelector('#screen')?.getBoundingClientRect();
+		if (rect) {
+			gsap.to(windowElement, {
+				height: rect.height,
+				width: rect.width
+			});
+		}
+	}
 
-	function onminimize() {}
+	function onminimize() {
+		minimized = true;
+	}
 
 	onMount(() => {
 		const proxies = [1, 2, 3, 4, 5, 6, 7, 8].map(() => document.createElement('div'));
 
-		makeDraggable({ element: windowElement, trigger: windowBarElement });
+		Draggable.create(windowElement, {
+			trigger: windowBarElement,
+			onPress: function () {
+				windowStore.setActiveWindowTitle(title);
+			}
+		});
 
 		Draggable.create(proxies[0], {
 			trigger: bottomRightHandle,
@@ -140,7 +147,11 @@
 	});
 </script>
 
-<div bind:this={windowElement} class="layer" style="height: {height}px; width: {width}px;">
+<div
+	bind:this={windowElement}
+	class={['layer', { minimized }]}
+	style="height: {height}px; width: {width}px;"
+>
 	<div class="window">
 		<div bind:this={windowBarElement} class="window__bar">
 			<button
@@ -182,6 +193,11 @@
 		background: var(--window-bg, #fcfcfc);
 		box-shadow: 0 0 12px rgb(80 80 80 / 30%);
 	}
+
+	.minimized {
+		display: none;
+	}
+
 	.window {
 		position: relative;
 		display: flex;
