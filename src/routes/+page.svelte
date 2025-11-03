@@ -1,11 +1,20 @@
 <script lang="ts">
 	import { Window, Notes } from '$lib';
+	import windowStore from '$lib/stores/windows.svelte';
 </script>
 
-<Window width={400} height={300} title="Notes">
-	<Notes />
-</Window>
+{#each windowStore.windows as window (window.id)}
+	<Window width={400} height={300} onclose={() => windowStore.remove(window.id)} title="Notes">
+		{@render window.program()}
+	</Window>
+{/each}
 
-<Window width={400} height={300} title="Notes">
+<button
+	onclick={() => {
+		windowStore.add(note);
+	}}>Add Window</button
+>
+
+{#snippet note()}
 	<Notes />
-</Window>
+{/snippet}

@@ -11,6 +11,7 @@
 		z: number;
 		minimized: boolean;
 		isOpen: boolean;
+		onclose: () => void;
 	};
 </script>
 
@@ -29,7 +30,8 @@
 		y,
 		z,
 		minimized,
-		isOpen
+		isOpen,
+		onclose
 	}: OSWindow & { children?: Snippet } = $props();
 
 	let windowElement: HTMLDivElement;
@@ -78,6 +80,10 @@
 	function updateUpDrag(this: Draggable) {
 		gsap.set(windowElement, { height: '-=' + this.deltaY, y: '+=' + this.deltaY });
 	}
+
+	function onmaximize() {}
+
+	function onminimize() {}
 
 	onMount(() => {
 		const proxies = [1, 2, 3, 4, 5, 6, 7, 8].map(() => document.createElement('div'));
@@ -137,10 +143,21 @@
 <div bind:this={windowElement} class="layer" style="height: {height}px; width: {width}px;">
 	<div class="window">
 		<div bind:this={windowBarElement} class="window__bar">
-			<button aria-label="close" class="window__bar__button window__bar__button--close"></button>
-			<button aria-label="minimize" class="window__bar__button window__bar__button--minimize"
+			<button
+				onclick={onclose}
+				aria-label="close"
+				class="window__bar__button window__bar__button--close"
 			></button>
-			<button aria-label="fullscreen" class="window__bar__button window__bar__button--fullscreen">
+			<button
+				onclick={onminimize}
+				aria-label="minimize"
+				class="window__bar__button window__bar__button--minimize"
+			></button>
+			<button
+				onclick={onmaximize}
+				aria-label="fullscreen"
+				class="window__bar__button window__bar__button--fullscreen"
+			>
 			</button>
 		</div>
 		<div class="window__content">
